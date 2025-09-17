@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS user(
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100)
+);

@@ -1,0 +1,20 @@
+[package]
+name = "gane_online_services"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+database-macro = { path="./database-macro" }
+
+[workspace]
+members = [
+    "auth_service",
+    "database",
+    "friends_service",
+    "redis",
+    "gateway",
+    "matchmaking_service",
+    "session_service",
+    "database-macro"
+]
+resolver = "2"

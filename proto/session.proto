@@ -1,0 +1,132 @@
+syntax="proto3";
+
+package session;
+
+service Session {
+    rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+    rpc DeleteSession(DeleteSessionRequest) returns (DeleteSessionResponse);
+    rpc UpdateSession(UpdateSessionRequest) returns (UpdateSessionResponse);
+    rpc JoinSession(JoinSessionRequest) returns (JoinSessionResponse);
+    rpc LeaveSession(LeaveSessionRequest) returns (LeaveSessionResponse);
+    rpc InviteSession(InviteSessionRequest) returns (InviteSessionResponse);
+    rpc AcceptInvite(AcceptInviteRequest) returns (AcceptInviteResponse);
+    rpc RejectInvite(RejectInviteRequest) returns (RejectInviteResponse);
+}
+
+
+enum SERVERSTATUS {
+    STOPPED = 0;
+    RUNNING = 1;
+}
+
+enum GAMESTATUS {
+    IN_GAME = 0;
+    IN_LOBBY = 1;
+}
+
+message DedicatedServer {
+    int64 id = 1;
+    string ip = 2;
+    int64 port = 3;
+    SERVERSTATUS server_status = 4;
+    SessionInfo owned_session = 5;
+}
+
+message SessionInfo {
+    int64 id = 1;
+    int64 dedicated_server_id = 2;
+    GAMESTATUS game_status = 3;
+    int64 leader_id = 4;
+    repeated int64 in_session_players_id = 5;
+}
+
+
+message CreateSessionRequest {
+    int64 instigator_id = 1;
+    SessionInfo session_info = 2;
+}
+
+message CreateSessionResponse {
+    bool success = 1;
+    int64 created_session_id = 2;
+    string message = 3;
+}
+
+
+message DeleteSessionRequest {
+    int64 instigator_id = 1;
+    int64 session_id = 2;
+    string delete_reason = 3;
+}
+
+message DeleteSessionResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+
+message UpdateSessionRequest {
+    int64 instigator_id = 1;
+    SessionInfo new_session_info = 2;
+}
+
+message UpdateSessionResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+
+message JoinSessionRequest {
+    int64 instigator_id = 1;
+    string joined_from = 2;
+    int64 session_id = 3;
+}
+
+message JoinSessionResponse {
+    SessionInfo session_info = 1;
+    string message = 2;
+}
+
+
+message LeaveSessionRequest {
+    int64 instigator_id = 1;
+    int64 session_id = 2;
+}
+
+message LeaveSessionResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+
+message InviteSessionRequest {
+    int64 instigator_id = 1;
+    int64 invited_id = 2;
+    int64 session_id = 3;
+}
+
+message InviteSessionResponse {
+    bool success = 2;
+    string message = 3;
+}
+
+
+message AcceptInviteRequest {
+    int64 accepter_id = 1;
+    int64 session_id = 2;
+}
+
+message AcceptInviteResponse {
+    SessionInfo joined_session_info = 1;
+    string message = 2;
+}
+
+
+message RejectInviteRequest {
+    int64 rejecter_id = 1;
+}
+
+message RejectInviteResponse {
+    bool success = 1;
+    string message = 2;
+}
