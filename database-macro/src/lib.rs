@@ -3,7 +3,7 @@ use std::io::Read;
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, LitStr};
-use std::collections::HashMap;
+use indexmap::IndexMap;
 use sqlparser::dialect::GenericDialect;
 use sqlparser::parser::Parser;
 use sqlparser::ast::{Statement, DataType};
@@ -29,11 +29,11 @@ pub fn generate_structs_from_sql(input: TokenStream) -> TokenStream {
     let mut structs = Vec::new();
     
     if let Some(parsed_sql) = parse_sql(&sql_content) {
-        let mut impl_def = Vec::new();
-        let mut impl_param_def = Vec::new();
         for (struct_name, fields) in parsed_sql {
             let mut field_def = Vec::new();
             let mut field_idents = Vec::new();
+            let mut impl_def = Vec::new();
+            let mut impl_param_def = Vec::new();
 
             let struct_ident = syn::Ident::new(&struct_name, proc_macro2::Span::call_site());
             for (field_name, type_name) in fields {
@@ -91,10 +91,10 @@ pub fn generate_structs_from_sql(input: TokenStream) -> TokenStream {
     expanded.into()
 }
 
-fn parse_sql(content: &String) -> Option<HashMap<String, HashMap<String, String>>> {
+fn parse_sql(content: &String) -> Option<IndexMap<String, IndexMap<String, String>>> {
     let dialect = GenericDialect {};
     let ast = Parser::parse_sql(&dialect, content);
-    let mut res = HashMap::new();
+    let mut res = IndexMap::new();
 
     match ast {
         Ok(statements) => {
@@ -107,7 +107,7 @@ fn parse_sql(content: &String) -> Option<HashMap<String, HashMap<String, String>
                         Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
                         None => String::new(),
                     };
-                    let mut fields = HashMap::new();
+                    let mut fields = IndexMap::new();
                     for column in t.columns {
                         // let table_name = t.name.to_string();
                         let name = column.name.to_string();
